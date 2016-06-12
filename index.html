@@ -24,20 +24,29 @@
     </nav>
 </div>
 <!-------------------------------------- END TOP NAVBAR ------------------------------->
-<br/>
-<br/>
-<br/>
-<br/>
 
-<div class="container-fluid animated fadeInLeft">
+<div style="margin-top: 10%" class="container-fluid animated fadeInLeft">
     <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <fusioncharts
                         width = "100%"
                         height = "500"
                         type="scatter"
-                        dataSource="{{movieData}}" >
+                        dataSource="{{movieScatterData}}" >
                 </fusioncharts>
+        </div>
+    </div>
+</div>
+
+<div style="margin-top: 5%; margin-bottom: 10%;width: 75%" class="container-fluid animated fadeInRight">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <fusioncharts
+                    width = "100%"
+                    height = "500"
+                    type="pie2d"
+                    dataSource="{{moviePieData}}" >
+            </fusioncharts>
         </div>
     </div>
 </div>

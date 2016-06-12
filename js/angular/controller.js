@@ -409,9 +409,15 @@ visualApp.controller('movieChartCtrl', function ($scope) {
         "Name": "Movies JSON"
     }
 
-    var data = [];
-    var movies = [];
     var moviesToBeJsonified = movieJsonSrc["Movies"];
+    var movies = [];
+    var movieDataObjects = [];
+    var ratingToSentCounter = {
+        "0to2": 0,
+        "2to3": 0,
+        "3to5": 0
+    };
+
     for (var i = 0; i < moviesToBeJsonified.length; i++) {
         var movieJsonObj = JSON.parse(moviesToBeJsonified[i]);
         if (!movieJsonObj.title.includes("Chevalier") && movieJsonObj.sentiment != 0 && movieJsonObj.rating != 0) {
@@ -422,26 +428,53 @@ visualApp.controller('movieChartCtrl', function ($scope) {
     for (var i = 0; i < movies.length; i++) {
         var sentiment = movies[i].sentiment;
         var rating = movies[i].rating;
-        var title = movies[i].title;
+        var title = movies[i].title.trim();
         var movieDataObj = {};
 
         movieDataObj.x = rating.toFixed(2);
         movieDataObj.y = sentiment.toFixed(2);
         movieDataObj.tooltext =
-            title.split(" ")[0] + "-> "
+            title + "-> "
             + "rating: " + movieDataObj.x + ", "
             + "sentiment: " + movieDataObj.y;
 
-        data.push(movieDataObj);
+        movieDataObjects.push(movieDataObj);
 
+        if (sentiment >= 0.0 && sentiment <= 1.0) {
+            if (rating < 2.0) {
+                ratingToSentCounter["0to2"]++;
+            }
+            else if (rating < 3.0) {
+                ratingToSentCounter["2to3"]++;
+            }
+            else {
+                ratingToSentCounter["3to5"]++;
+            }
+        }
     }
 
-    $scope.movieData = {
+    var pieDataObjects = [
+        {
+            "label": "Rating < 2.0",
+            "value": ratingToSentCounter["0to2"]
+        },
+        {
+            "label": "2.0 <= Rating < 3.0",
+            "value": ratingToSentCounter["2to3"]
+        },
+        {
+            "label": "Rating >= 3.0",
+            "value": ratingToSentCounter["3to5"]
+        },
+    ];
+
+
+    $scope.movieScatterData = {
         "chart": {
             "palette": "1",
-            "caption": "Movies",
-            "subcaption": "Rating vs Sentiment",
-            "yaxisname": "Sentiment",
+            "caption": "Movie Data",
+            "subcaption": "Rating vs Average Sentiment",
+            "yaxisname": "Average Sentiment",
             "xaxisname": "Rating",
             "xaxismaxvalue": "5",
             "xaxisminvalue": "1",
@@ -495,12 +528,36 @@ visualApp.controller('movieChartCtrl', function ($scope) {
                 "seriesname": "Movies",
                 "color": "#f8bd19",
                 "anchorbgcolor": "#f8bd19 ",
-                "plotborderthickness": "0",
+                "plotborderthickness": "2",
                 "showplotborder": "1",
                 "anchorsides": "3",
-                "data": data
+                "data": movieDataObjects
             }
         ]
+    };
+
+    $scope.moviePieData = {
+        "chart": {
+            "caption": "Count of Movie Ratings with Average Sentiment Between 0.0 and 1.0",
+            "bgcolor": "F5F5F5",
+            "showvalues": "1",
+            "showpercentvalues": "1",
+            "showborder": "1",
+            "showplotborder": "0",
+            "showlegend": "1",
+            "legendborder": "0",
+            "legendposition": "bottom",
+            "enablesmartlabels": "1",
+            "use3dlighting": "0",
+            "showshadow": "0",
+            "legendbgcolor": "#CCCCCC",
+            "legendbgalpha": "20",
+            "legendborderalpha": "0",
+            "legendshadow": "0",
+            "legendnumcolumns": "3",
+            "palettecolors": "#f8bd19,#e44a00,#008ee4"
+        },
+        "data": pieDataObjects
     };
 });
 
