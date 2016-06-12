@@ -414,25 +414,26 @@ visualApp.controller('movieChartCtrl', function ($scope) {
     var moviesToBeJsonified = movieJsonSrc["Movies"];
     for (var i = 0; i < moviesToBeJsonified.length; i++) {
         var movieJsonObj = JSON.parse(moviesToBeJsonified[i]);
-        movies.push(movieJsonObj);
+        if (!movieJsonObj.title.includes("Chevalier") && movieJsonObj.sentiment != 0 && movieJsonObj.rating != 0) {
+            movies.push(movieJsonObj);
+        }
     }
 
     for (var i = 0; i < movies.length; i++) {
         var sentiment = movies[i].sentiment;
-        if (sentiment != 0) {
-            var rating = movies[i].rating;
-            var title = movies[i].title;
-            var movieDataObj = {};
+        var rating = movies[i].rating;
+        var title = movies[i].title;
+        var movieDataObj = {};
 
-            movieDataObj.x = rating.toFixed(2);
-            movieDataObj.y = sentiment.toFixed(2);
-            movieDataObj.tooltext =
-                title.split(" ")[0] + "-> "
-                + "rating: " + movieDataObj.x + ", "
-                + "sentiment: " + movieDataObj.y;
+        movieDataObj.x = rating.toFixed(2);
+        movieDataObj.y = sentiment.toFixed(2);
+        movieDataObj.tooltext =
+            title.split(" ")[0] + "-> "
+            + "rating: " + movieDataObj.x + ", "
+            + "sentiment: " + movieDataObj.y;
 
-            data.push(movieDataObj);
-        }
+        data.push(movieDataObj);
+
     }
 
     $scope.movieData = {
